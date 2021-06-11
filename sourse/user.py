@@ -12,7 +12,3 @@ class User:
     
     def __repr__(self):
         return self.__str__()
-    
-    def update_position(self, lat, lon):
-        self.lat = lat
-        self.lon = lon
