@@ -8,3 +8,9 @@ class TaxiStand:
        self.number = number
        self.lat = lat
        self.lon = lon
+    
+    def __str__(self):
+        return f'TaxiStand({self.public_place}, {self.name}, {self.phone}, {self.number}, {self.lat}, {self.lon})'
+    
+    def __repr__(self):
+        return self.__str__()
