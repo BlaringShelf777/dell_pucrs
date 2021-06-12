@@ -25,7 +25,9 @@ def user_location():
         lon = str(input('Digite sua longitude: ')).strip()
         if re_exp.fullmatch(lat) and re_exp.fullmatch(lon):
             get_coord = False
-        else: input_error = True
+        else: 
+            input_error = True
+            screen_clear(False)
 
     return User (parse_coord(lat), parse_coord(lon))
 
@@ -123,6 +125,7 @@ def get_public_place(tree, hash_map):
     get_pre = True
 
     while get_pre:
+        screen_clear(False)
         prefix = str(input('> Digite todo ou parte do nome do logradouro: ')).strip()
         if len(prefix): get_pre = False
     show_taxi_stands(prefix, tree, hash_map)
@@ -140,7 +143,10 @@ def max_dist(arr):
 # Procura os pontos de taxi mais proximos
 # da posição do usuário
 def closest_taxi_stand(user, hash, max=3):
-    if not user or not hash: return
+    if not hash: return
+    if not user: 
+        print('> Erro! Informe sua latitude e longitude antes.\n')
+        return
 
     closest = list()
     
@@ -184,30 +190,33 @@ def closest_taxi_stand(user, hash, max=3):
     for stand in closest:
         print(f'{stand}\n')
 
-def screen_clear():
-    input('\n> Precione \'Enter\' para continuar...')
+
+# https://www.geeksforgeeks.org/clear-screen-python/
+def screen_clear(ask=True):
+    if ask: input('\n> Precione \'Enter\' para continuar...')
     # mac linux
-    if os.name == 'posix':
-        _ = os.system('clear')
-    else:
+    if os.name == 'posix': _ = os.system('clear')
     # windows
-      _ = os.system('cls')
+    else: _ = os.system('cls')
 
 tree, hash = parse_file(FILE_PATH)
 user = None
-
-while True:
-    print('=== MENU ===\n1. Listar todos os pontos de taxi\n2. Informar minha localização\n3. Encontrar pontos próximos\n4. Buscar pontos por logradouro\n5. Terminar o programa')
-    try:
-        option = int(input('\n\n> Escolha uma das opções:\n'))
-    except:
-        print('> Escolha uma opção válida.')
+if tree and hash:
+    while True:
+        print('=== MENU ===\n1. Listar todos os pontos de taxi\n2. Informar minha localização\n3. Encontrar pontos próximos\n4. Buscar pontos por logradouro\n5. Terminar o programa')
+        try:
+            option = int(input('\n\n> Escolha uma das opções:\n'))
+        except:
+            print('> Escolha uma opção válida.')
+            screen_clear()
+            continue
+        if option >= 1 and option <= 5:
+            screen_clear(False)
+            if   option == 1: list_all(hash)
+            elif option == 2: user = user_location()
+            elif option == 3: closest_taxi_stand(user, hash)
+            elif option == 4: get_public_place(tree, hash)
+            else: break
+        else: print(f'> Opção {option} não encontrado.\n')
         screen_clear()
-        continue
-    if   option == 1: list_all(hash)
-    elif option == 2: user = user_location()
-    elif option == 3: closest_taxi_stand(user, hash)
-    elif option == 4: get_public_place(tree, hash)
-    elif option == 5: break
-    else: print(f'> Opção {option} não encontrado.\n')
-    screen_clear()
+else: screen_clear()
